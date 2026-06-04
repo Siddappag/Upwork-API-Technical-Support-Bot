@@ -1,0 +1,15 @@
+[client]
+showErrorDetails = false
+
+[logger]
+level = "error"
+
+[client.toolbarMode]
+mode = "minimal"
+
+[theme]
+base = "dark"
+
+# Disable chromadb telemetry
+[client.runOnSave]
+runOnSave = true

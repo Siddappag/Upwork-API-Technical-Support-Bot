@@ -42,5 +42,5 @@ Thumbs.db
 # Vector database (can be regenerated)
 chroma_db/
 
-# Streamlit cache
-.streamlit/
+# Streamlit cache and secrets
+.streamlit/secrets.toml

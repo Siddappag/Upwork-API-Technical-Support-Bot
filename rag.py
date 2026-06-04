@@ -9,6 +9,12 @@ from typing import Tuple
 from dotenv import load_dotenv
 import requests
 import json
+import warnings
+
+# Suppress chromadb and opentelemetry warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+warnings.filterwarnings("ignore", message=".*chromadb.*")
+warnings.filterwarnings("ignore", message=".*opentelemetry.*")
 
 from utils.retriever import Retriever
 from utils.embeddings import EmbeddingGenerator

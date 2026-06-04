@@ -3,6 +3,11 @@ Streamlit Application
 Web UI for Upwork API Technical Support Bot
 """
 
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+warnings.filterwarnings("ignore", message=".*chromadb.*")
+warnings.filterwarnings("ignore", message=".*opentelemetry.*")
+
 import streamlit as st
 import os
 import sys
