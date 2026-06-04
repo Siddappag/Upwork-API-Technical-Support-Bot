@@ -16,8 +16,6 @@ from dotenv import load_dotenv
 # Add current directory to path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from rag import RAGBot
-
 # Page configuration
 st.set_page_config(
     page_title="Upwork API Technical Support Bot",
@@ -28,6 +26,13 @@ st.set_page_config(
 
 # Load environment variables
 load_dotenv()
+
+
+@st.cache_resource(show_spinner=False)
+def get_rag_bot():
+    from rag import RAGBot
+
+    return RAGBot()
 
 # Custom CSS
 st.markdown("""
@@ -79,13 +84,18 @@ st.markdown("""
 if 'rag_bot' not in st.session_state:
     try:
         with st.spinner("⏳ Initializing RAG Bot (this may take a moment on first run)..."):
-            st.session_state.rag_bot = RAGBot()
+            st.session_state.rag_bot = get_rag_bot()
             st.session_state.bot_ready = True
     except ValueError as e:
         st.error(f"⚠️ Configuration Error")
         st.warning(f"Error: {str(e)}")
         st.info("❗ Please add `DEEPINFRA_API_KEY` to Streamlit Cloud Secrets:")
         st.code("DEEPINFRA_API_KEY = your_key_here", language="")
+        st.stop()
+    except ImportError as e:
+        st.error("⚠️ Dependency Error")
+        st.warning(f"Error: {str(e)}")
+        st.info("The deployed environment is missing a required package. Rebuild the app after updating requirements.txt.")
         st.stop()
     except FileNotFoundError as e:
         st.error(f"⚠️ Missing Files")
