@@ -1,5 +1,9 @@
 # Upwork API Technical Support AI Bot (RAG)
 
+### Live Deployment
+Access the deployed app here:
+https://siddappag-upwork-api-technical-support-bot-app-ob2wqa.streamlit.app/
+
 ## 📋 Overview
 
 This is a **Retrieval-Augmented Generation (RAG)** based AI assistant that answers developer questions about the Upwork API documentation. The system retrieves relevant documentation sections and uses DeepInfra's Meta-Llama model to generate accurate answers directly from the provided context.
