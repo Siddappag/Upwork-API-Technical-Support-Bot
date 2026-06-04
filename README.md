@@ -17,6 +17,15 @@ This is a **Retrieval-Augmented Generation (RAG)** based AI assistant that answe
 - 🎨 Clean Streamlit web interface
 
 ---
+## 📸 Application Screenshots
+
+### Home Page
+
+![Home Page](assets/home_page.png)
+
+### Question Answering Demo
+
+![Answer Demo](assets/answer_demo.png)
 
 ## 🛠️ Technology Stack
 
