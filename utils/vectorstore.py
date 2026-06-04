@@ -22,10 +22,11 @@ class VectorStore:
             persist_dir: Directory to persist the database
         """
         self.persist_dir = persist_dir
+        self.persistent = True
         os.makedirs(persist_dir, exist_ok=True)
-        
+
         try:
-            # Initialize ChromaDB with persistence (no telemetry)
+            # Try persistent mode first.
             self.client = chromadb.PersistentClient(
                 path=persist_dir,
                 settings=chromadb.config.Settings(
@@ -40,8 +41,18 @@ class VectorStore:
             )
             print(f"✓ ChromaDB initialized with persistence at: {persist_dir}")
         except Exception as e:
-            print(f"ChromaDB initialization error: {str(e)}")
-            raise
+            # Streamlit Cloud can fail here when persisted schema is incompatible.
+            print(f"Persistent ChromaDB init failed: {str(e)}")
+            print("Falling back to in-memory ChromaDB for this session...")
+            self.persistent = False
+            self.client = chromadb.EphemeralClient(
+                settings=chromadb.config.Settings(anonymized_telemetry=False)
+            )
+            self.collection = self.client.get_or_create_collection(
+                name="upwork_api_docs",
+                metadata={"hnsw:space": "cosine"}
+            )
+            print("✓ ChromaDB initialized in memory")
     
     def add_documents(self, chunks: List[str], embeddings: List[List[float]]) -> None:
         """
