@@ -78,21 +78,25 @@ st.markdown("""
 # Initialize session state
 if 'rag_bot' not in st.session_state:
     try:
-        with st.spinner("Initializing RAG Bot..."):
+        with st.spinner("⏳ Initializing RAG Bot (this may take a moment on first run)..."):
             st.session_state.rag_bot = RAGBot()
             st.session_state.bot_ready = True
     except ValueError as e:
-        st.error(f"⚠️ Configuration Error: {str(e)}")
-        st.info("Please set DEEPINFRA_API_KEY in Streamlit Cloud secrets")
+        st.error(f"⚠️ Configuration Error")
+        st.warning(f"Error: {str(e)}")
+        st.info("❗ Please add `DEEPINFRA_API_KEY` to Streamlit Cloud Secrets:")
+        st.code("DEEPINFRA_API_KEY = your_key_here", language="")
         st.stop()
     except FileNotFoundError as e:
-        st.error(f"⚠️ Vector Database Error: {str(e)}")
-        st.info("The application needs to ingest the PDF first. This will happen automatically on first run.")
+        st.error(f"⚠️ Missing Files")
+        st.warning(f"Error: {str(e)}")
         st.stop()
     except Exception as e:
-        st.error(f"⚠️ Initialization Error: {str(e)}")
+        st.error(f"⚠️ Initialization Error")
+        st.warning(f"Error details: {str(e)}")
         import traceback
-        st.error(traceback.format_exc())
+        with st.expander("🔍 Technical Details"):
+            st.code(traceback.format_exc(), language="python")
         st.stop()
 
 # Header

@@ -4,6 +4,11 @@ Handles document retrieval and LLM integration with DeepInfra
 """
 
 import os
+# Disable all telemetry BEFORE any other imports
+os.environ['CHROMADB_TELEMETRY_DISABLED'] = 'true'
+os.environ['OTEL_SDK_DISABLED'] = 'true'
+os.environ['OTEL_EXPORTER_OTLP_INSECURE'] = 'true'
+
 import time
 from typing import Tuple
 from dotenv import load_dotenv

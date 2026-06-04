@@ -3,9 +3,12 @@ Vector Store Module
 Manages ChromaDB for storing and retrieving embeddings
 """
 
+import os
+os.environ['CHROMADB_TELEMETRY_DISABLED'] = 'true'
+os.environ['OTEL_SDK_DISABLED'] = 'true'
+
 import chromadb
 from typing import List, Tuple
-import os
 
 
 class VectorStore:
@@ -21,13 +24,24 @@ class VectorStore:
         self.persist_dir = persist_dir
         os.makedirs(persist_dir, exist_ok=True)
         
-        # Initialize ChromaDB with persistence
-        self.client = chromadb.PersistentClient(path=persist_dir)
-        self.collection = self.client.get_or_create_collection(
-            name="upwork_api_docs",
-            metadata={"hnsw:space": "cosine"}
-        )
-        print(f"ChromaDB initialized with persistence at: {persist_dir}")
+        try:
+            # Initialize ChromaDB with persistence (no telemetry)
+            self.client = chromadb.PersistentClient(
+                path=persist_dir,
+                settings=chromadb.config.Settings(
+                    is_persistent=True,
+                    persist_directory=persist_dir,
+                    anonymized_telemetry=False
+                )
+            )
+            self.collection = self.client.get_or_create_collection(
+                name="upwork_api_docs",
+                metadata={"hnsw:space": "cosine"}
+            )
+            print(f"✓ ChromaDB initialized with persistence at: {persist_dir}")
+        except Exception as e:
+            print(f"ChromaDB initialization error: {str(e)}")
+            raise
     
     def add_documents(self, chunks: List[str], embeddings: List[List[float]]) -> None:
         """
