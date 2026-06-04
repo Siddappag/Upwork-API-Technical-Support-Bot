@@ -9,6 +9,7 @@ os.environ['CHROMADB_TELEMETRY_DISABLED'] = 'true'
 os.environ['OTEL_SDK_DISABLED'] = 'true'
 os.environ['OTEL_EXPORTER_OTLP_INSECURE'] = 'true'
 
+import shutil
 import time
 from typing import Tuple
 from dotenv import load_dotenv
@@ -21,7 +22,8 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)
 warnings.filterwarnings("ignore", message=".*chromadb.*")
 warnings.filterwarnings("ignore", message=".*opentelemetry.*")
 
-from utils.retriever import Retriever
+from utils.loader import load_pdf
+from utils.retriever import Retriever, create_chunks
 from utils.embeddings import EmbeddingGenerator
 from utils.vectorstore import VectorStore
 
@@ -47,7 +49,7 @@ class RAGBot:
         
         # Initialize components
         self.embedding_generator = EmbeddingGenerator()
-        self.vector_store = VectorStore(persist_dir=persist_dir)
+        self.vector_store = self._initialize_vector_store(persist_dir)
         self.retriever = Retriever(self.vector_store, self.embedding_generator)
         
         # Load system prompt
@@ -64,6 +66,33 @@ class RAGBot:
             raise ValueError("DEEPINFRA_API_KEY not set in environment variables")
         
         print("✓ RAG Bot initialized successfully")
+
+    def _initialize_vector_store(self, persist_dir: str) -> VectorStore:
+        """Initialize the vector store and rebuild it from the PDF when needed."""
+        try:
+            vector_store = VectorStore(persist_dir=persist_dir)
+            if vector_store.get_collection_size() == 0:
+                self._ingest_documents(vector_store)
+            return vector_store
+        except Exception as error:
+            print(f"Vector store bootstrap failed: {error}")
+            if os.path.exists(persist_dir):
+                shutil.rmtree(persist_dir)
+
+            vector_store = VectorStore(persist_dir=persist_dir)
+            self._ingest_documents(vector_store)
+            return vector_store
+
+    def _ingest_documents(self, vector_store: VectorStore) -> None:
+        """Build a fresh vector store from the bundled PDF."""
+        pdf_path = os.path.join(SCRIPT_DIR, "data", "upwork_api_reference.pdf")
+        if not os.path.exists(pdf_path):
+            raise FileNotFoundError(f"PDF not found at {pdf_path}")
+
+        text = load_pdf(pdf_path)
+        chunks = create_chunks(text, chunk_size=500, chunk_overlap=50)
+        embeddings = self.embedding_generator.generate_embeddings(chunks).tolist()
+        vector_store.add_documents(chunks, embeddings)
     
     def retrieve_context(self, query: str) -> Tuple[list, list]:
         """
