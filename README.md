@@ -21,13 +21,11 @@ This is a **Retrieval-Augmented Generation (RAG)** based AI assistant that answe
 
 ### Home Page
 
-![Home Page](<img width="1317" height="646" alt="home_page" src="https://github.com/user-attachments/assets/a975ddaf-5a58-4707-820c-96e0b4160061" />
-)
+<img width="1317" alt="home_page" src="https://github.com/user-attachments/assets/a975ddaf-5a58-4707-820c-96e0b4160061">
 
 ### Question Answering Demo
 
-![Answer Demo](<img width="1331" height="650" alt="ans_demo" src="https://github.com/user-attachments/assets/e8b71b67-b3ef-4e8b-a285-650ada6a1264" />
-)
+<img width="1331" alt="ans_demo" src="https://github.com/user-attachments/assets/e8b71b67-b3ef-4e8b-a285-650ada6a1264">
 
 ## 🛠️ Technology Stack
 
