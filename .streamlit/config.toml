@@ -2,14 +2,9 @@
 showErrorDetails = false
 
 [logger]
-level = "error"
-
-[client.toolbarMode]
-mode = "minimal"
+level = "warning"
 
 [theme]
 base = "dark"
+primaryColor = "#1f77b4"
 
-# Disable chromadb telemetry
-[client.runOnSave]
-runOnSave = true
