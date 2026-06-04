@@ -39,8 +39,5 @@ wheels/
 .DS_Store
 Thumbs.db
 
-# Vector database (can be regenerated)
-chroma_db/
-
 # Streamlit cache and secrets
 .streamlit/secrets.toml

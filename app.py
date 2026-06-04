@@ -77,12 +77,23 @@ st.markdown("""
 
 # Initialize session state
 if 'rag_bot' not in st.session_state:
-    with st.spinner("Initializing RAG Bot..."):
-        try:
+    try:
+        with st.spinner("Initializing RAG Bot..."):
             st.session_state.rag_bot = RAGBot()
-        except Exception as e:
-            st.error(f"Failed to initialize RAG Bot: {str(e)}")
-            st.stop()
+            st.session_state.bot_ready = True
+    except ValueError as e:
+        st.error(f"⚠️ Configuration Error: {str(e)}")
+        st.info("Please set DEEPINFRA_API_KEY in Streamlit Cloud secrets")
+        st.stop()
+    except FileNotFoundError as e:
+        st.error(f"⚠️ Vector Database Error: {str(e)}")
+        st.info("The application needs to ingest the PDF first. This will happen automatically on first run.")
+        st.stop()
+    except Exception as e:
+        st.error(f"⚠️ Initialization Error: {str(e)}")
+        import traceback
+        st.error(traceback.format_exc())
+        st.stop()
 
 # Header
 st.markdown('<div class="main-header">🤖 Upwork API Technical Support Bot</div>', unsafe_allow_html=True)
